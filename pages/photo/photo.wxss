@@ -1,5 +1,17 @@
 /* pages/photo.wxss */
 .other-button-hover {
-    background-color: blue;
-  }
-  button {margin: 10px;}
+  background-color: blue;
+}
+
+button {
+  margin: 10px;
+}
+
+.button-sp-area {
+  margin: 0 auto;
+  width: 60%;
+}
+
+.mini-btn {
+  margin-right: 10rpx;
+}
