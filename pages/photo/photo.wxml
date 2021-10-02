@@ -1,8 +1,8 @@
 <view class="container">
+    <canvas id="canvas1" type="2d"></canvas>
     <button type="default" size="{{defaultSize}}" bindtap="choosePhoto" hover-class="other-button-hover"
         loading="{{isLoading}}"> 选择/拍摄图片
     </button>
-    <canvas id="canvas1" type="2d"></canvas>
     <view class="button-sp-area">
         <button type="default" size="{{defaultSize}}" bindtap="bthClick" data-color="red" class="mini-btn">红</button>
         <button type="default" size="{{defaultSize}}" bindtap="bthClick" data-color="yellow" class="mini-btn">黄</button>

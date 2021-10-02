@@ -21,7 +21,12 @@ Page({
         dh: 100,
         image1: null,
         mvTid: null,
-        chgTid: null
+        chgTid: null,
+        openId: '',
+        userInfo: null,
+        baseUri:'http://www.shazhibin.top/service',
+        //baseUri:'http://localhost:8081/service',
+        hasUserInfo: false
     },
 
     /**
@@ -48,6 +53,28 @@ Page({
                 canvas: canvas,
                 context: ctx
             })
+        })
+        let t = this;
+        wx.login({
+            success(res) {
+                if (res.code) {
+                    console.log(res)
+                    wx.request({
+                        url: t.data.baseUri+'/wx/login',
+                        data: {
+                            code: res.code
+                        },
+                        success(res) {
+                            t.setData({
+                                userInfo: res.data.result,
+                                hasUserInfo: res.data.result.hasUserInfo
+                            })
+                        }
+                    })
+                } else {
+                    console.log('登录失败' + res.errMsg)
+                }
+            }
         })
     },
 
@@ -93,6 +120,29 @@ Page({
 
     },
     choosePhoto: function (event) {
+        if (!this.data.hasUserInfo) {
+            wx.getUserProfile({
+                desc: '完善信息',
+                lang: 'zh_CN',
+                success: (res) => {
+                    let openId = this.data.userInfo.openId;
+                    this.setData({
+                        userInfo: res.userInfo,
+                        'userInfo.openId': openId,
+                        hasUserInfo: true
+                    })
+                    wx.request({
+                        url: this.data.baseUri+'/wx/save',
+                        data: this.data.userInfo,
+                        method: 'POST',
+                        success: (res) => {
+
+                        }
+                    })
+                }
+            })
+            return
+        }
         let t = this
         wx.chooseImage({
             count: 1,
@@ -105,10 +155,12 @@ Page({
                 // tempFilePath可以作为img标签的src属性显示图片
                 const tempFilePaths = res.tempFilePaths
                 wx.uploadFile({
-                    url: 'http://localhost:8081/service/photo/getForeground',
+                    url: t.data.baseUri+'/wx/photo/getForeground',
                     filePath: tempFilePaths[0],
                     name: 'file',
+                    formData:{openId:t.data.userInfo.openId},
                     success(res) {
+                        console.log(res)
                         let data = JSON.parse(res.data)
                         t.setData({
                             image1Src: 'data:image/png;base64,' + data.result,
